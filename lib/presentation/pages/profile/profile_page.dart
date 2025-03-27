@@ -11,9 +11,7 @@ class ProfilePage extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
-            onPressed: () {
-              // TODO: Implementar logout
-            },
+            onPressed: () {},
           ),
         ],
       ),
@@ -37,40 +35,30 @@ class ProfilePage extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.edit),
             title: const Text('Editar Perfil'),
-            onTap: () {
-              // TODO: Implementar edição de perfil
-            },
+            onTap: () {},
           ),
           ListTile(
             leading: const Icon(Icons.notifications),
             title: const Text('Notificações'),
             trailing: Switch(
               value: true,
-              onChanged: (value) {
-                // TODO: Implementar configuração de notificações
-              },
+              onChanged: (value) {},
             ),
           ),
           ListTile(
             leading: const Icon(Icons.lock),
             title: const Text('Alterar Senha'),
-            onTap: () {
-              // TODO: Implementar alteração de senha
-            },
+            onTap: () {},
           ),
           ListTile(
             leading: const Icon(Icons.help),
             title: const Text('Ajuda'),
-            onTap: () {
-              // TODO: Implementar tela de ajuda
-            },
+            onTap: () {},
           ),
           ListTile(
             leading: const Icon(Icons.info),
             title: const Text('Sobre'),
-            onTap: () {
-              // TODO: Implementar tela sobre
-            },
+            onTap: () {},
           ),
         ],
       ),

@@ -3,7 +3,6 @@ import '../../../data/repositories/product_repository_impl.dart';
 import '../../../domain/entities/product.dart';
 import '../../../domain/repositories/product_repository.dart';
 import 'widgets/product_card.dart';
-import 'widgets/cart_modal.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -42,43 +41,43 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void _showCart() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => const CartModal(),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Yami'),
+        leading: IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () {
+            // TODO: Implementar menu lateral
+          },
+        ),
+        title: const Text('Produtos'),
+        centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.shopping_cart),
-            onPressed: _showCart,
+            icon: const Icon(Icons.notifications),
+            onPressed: () {
+              // TODO: Implementar notificações
+            },
           ),
         ],
       ),
-      body:
-          _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : GridView.builder(
-                padding: const EdgeInsets.all(16),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.75,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                ),
-                itemCount: _products.length,
-                itemBuilder: (context, index) {
-                  final product = _products[index];
-                  return ProductCard(product: product);
-                },
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : GridView.builder(
+              padding: const EdgeInsets.all(16),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.50,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
               ),
+              itemCount: _products.length,
+              itemBuilder: (context, index) {
+                final product = _products[index];
+                return ProductCard(product: product);
+              },
+            ),
     );
   }
 }

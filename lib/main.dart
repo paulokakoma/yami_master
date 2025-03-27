@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'presentation/pages/auth/auth_page.dart';
 import 'presentation/pages/main/main_page.dart';
 
 void main() {
@@ -22,7 +21,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const AuthPage(),
+      home: const MainPage(),
       routes: {
         '/main': (context) => const MainPage(),
       },

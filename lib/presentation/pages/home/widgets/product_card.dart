@@ -11,9 +11,7 @@ class ProductCard extends StatelessWidget {
     return Card(
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () {
-          // TODO: Navegar para a página de detalhes do produto
-        },
+        onTap: () {},
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -42,17 +40,15 @@ class ProductCard extends StatelessWidget {
                   Text(
                     'R\$ ${product.price.toStringAsFixed(2)}',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                   const SizedBox(height: 8),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {
-                        // TODO: Adicionar ao carrinho
-                      },
+                      onPressed: () {},
                       child: const Text('Adicionar ao Carrinho'),
                     ),
                   ),

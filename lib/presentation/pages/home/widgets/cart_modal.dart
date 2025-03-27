@@ -87,8 +87,8 @@ class _CartModalState extends State<CartModal> {
                   return ListTile(
                     leading: Image.asset(
                       item.imageUrl,
-                      width: 50,
-                      height: 50,
+                      width: 35,
+                      height: 35,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
                         return const Icon(Icons.error);
@@ -127,9 +127,7 @@ class _CartModalState extends State<CartModal> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  // TODO: Implementar checkout
-                },
+                onPressed: () {},
                 child: const Text('Finalizar Compra'),
               ),
             ),
