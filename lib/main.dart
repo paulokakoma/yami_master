@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'presentation/pages/main/main_page.dart';
+import 'package:yami_app/presentation/pages/home/home_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,9 +21,9 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const MainPage(),
+      home: const HomePage(),
       routes: {
-        '/main': (context) => const MainPage(),
+        '/main': (context) => const HomePage(),
       },
     );
   }
