@@ -1,3 +1,12 @@
+// Versão 2.0 - Criação da página de autenticação
+// Este arquivo implementa a interface de login e cadastro do aplicativo Yami
+// Inclui funcionalidades de:
+// - Login com telefone e senha
+// - Cadastro de novos usuários
+// - Login social (Google, Facebook e Apple)
+// - Validação de formulários
+// - Interface moderna com animações e feedback visual
+
 import 'package:flutter/material.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 
