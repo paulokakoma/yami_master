@@ -1,13 +1,16 @@
-import 'dart:math';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'dart:io';
 import '../../../data/repositories/product_repository_impl.dart';
 import '../../../domain/entities/product.dart';
+import '../../../domain/entities/cart_item.dart';
 import '../../../domain/repositories/product_repository.dart';
-import 'widgets/product_card.dart';
+import '../product/widgets/product_card.dart';
+import '../favorites/favorites_page.dart';
+import '../cart/cart_page.dart';
+import '../product/product_details_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -27,6 +30,9 @@ class _HomePageState extends State<HomePage>
   late Animation<double> _searchAnimation;
   File? _profileImage;
   final ImagePicker _picker = ImagePicker();
+  int _currentIndex = 1;
+  final List<Product> _favoriteProducts = [];
+  final List<CartItem> _cartItems = [];
 
   @override
   void initState() {
@@ -53,7 +59,6 @@ class _HomePageState extends State<HomePage>
 
   Future<void> _pickImage() async {
     try {
-      // Verificar se a galeria está disponível
       final XFile? image = await _picker.pickImage(
         source: ImageSource.gallery,
         maxWidth: 800,
@@ -91,7 +96,6 @@ class _HomePageState extends State<HomePage>
 
   Future<void> _takePhoto() async {
     try {
-      // Verificar se a câmera está disponível
       final XFile? image = await _picker.pickImage(
         source: ImageSource.camera,
         maxWidth: 800,
@@ -244,7 +248,6 @@ class _HomePageState extends State<HomePage>
                 title: 'Meu Perfil',
                 onTap: () {
                   Navigator.pop(context);
-                  // Implementar navegação para perfil
                 },
               ),
               _buildProfileOption(
@@ -252,7 +255,6 @@ class _HomePageState extends State<HomePage>
                 title: 'Início',
                 onTap: () {
                   Navigator.pop(context);
-                  // Já estamos na Home
                 },
               ),
               _buildProfileOption(
@@ -260,7 +262,6 @@ class _HomePageState extends State<HomePage>
                 title: 'Meus Pedidos',
                 onTap: () {
                   Navigator.pop(context);
-                  // Implementar navegação para pedidos
                 },
               ),
               _buildProfileOption(
@@ -268,7 +269,9 @@ class _HomePageState extends State<HomePage>
                 title: 'Favoritos',
                 onTap: () {
                   Navigator.pop(context);
-                  // Implementar navegação para favoritos
+                  setState(() {
+                    _currentIndex = 0;
+                  });
                 },
               ),
               _buildProfileOption(
@@ -276,7 +279,6 @@ class _HomePageState extends State<HomePage>
                 title: 'Configurações',
                 onTap: () {
                   Navigator.pop(context);
-                  // Implementar navegação para configurações
                 },
               ),
               const Divider(),
@@ -285,7 +287,6 @@ class _HomePageState extends State<HomePage>
                 title: 'Sair',
                 onTap: () {
                   Navigator.pop(context);
-                  // Implementar logout
                 },
               ),
             ],
@@ -307,6 +308,36 @@ class _HomePageState extends State<HomePage>
     );
   }
 
+  void _onItemTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
+  void _addToFavorites(Product product) {
+    setState(() {
+      if (_favoriteProducts.contains(product)) {
+        _favoriteProducts.remove(product);
+      } else {
+        _favoriteProducts.add(product);
+      }
+    });
+  }
+
+  void _addToCart(Product product, int quantity) {
+    setState(() {
+      final existingItemIndex = _cartItems.indexWhere(
+        (item) => item.product.id == product.id,
+      );
+
+      if (existingItemIndex == -1) {
+        _cartItems.add(CartItem(product: product, quantity: quantity));
+      } else {
+        _cartItems[existingItemIndex].quantity += quantity;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -316,7 +347,7 @@ class _HomePageState extends State<HomePage>
           color: Colors.green,
           onPressed: _showProfileOptions,
         ),
-        title: Text(
+        title: const Text(
           'Produtos',
           style: TextStyle(
             color: Colors.green,
@@ -344,7 +375,6 @@ class _HomePageState extends State<HomePage>
           SafeArea(
             child: Column(
               children: [
-                // Campo de pesquisa expansível
                 if (_isSearchExpanded)
                   Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -370,24 +400,20 @@ class _HomePageState extends State<HomePage>
                       },
                     ),
                   ),
-                // Lista de produtos
                 Expanded(
                   child: _isLoading
                       ? const Center(child: CircularProgressIndicator())
-                      : GridView.builder(
-                          padding: const EdgeInsets.all(16),
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 0.59,
-                            crossAxisSpacing: 16,
-                            mainAxisSpacing: 16,
-                          ),
-                          itemCount: _products.length,
-                          itemBuilder: (context, index) {
-                            final product = _products[index];
-                            return ProductCard(product: product);
-                          },
+                      : IndexedStack(
+                          index: _currentIndex,
+                          children: [
+                            FavoritesPage(
+                              favoriteProducts: _favoriteProducts,
+                              onAddToFavorites: _addToFavorites,
+                              onAddToCart: _addToCart,
+                            ),
+                            _buildProductGrid(),
+                            CartPage(cartItems: _cartItems),
+                          ],
                         ),
                 ),
               ],
@@ -395,28 +421,55 @@ class _HomePageState extends State<HomePage>
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 1,
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
+      bottomNavigationBar: CurvedNavigationBar(
+        backgroundColor: Colors.white,
+        color: Colors.green,
+        buttonBackgroundColor: Colors.green,
+        height: 60,
+        animationDuration: const Duration(milliseconds: 500),
+        animationCurve: Curves.easeInOutCubic,
+        index: _currentIndex,
+        onTap: _onItemTapped,
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.heart),
-            label: 'Favoritos',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.house),
-            label: 'Início',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.cart),
-            label: 'Carrinho',
-          ),
+          Icon(CupertinoIcons.heart, color: Colors.white),
+          Icon(CupertinoIcons.home, color: Colors.white),
+          Icon(CupertinoIcons.cart, color: Colors.white),
         ],
-        onTap: (index) {
-          // Implementar navegação
-        },
       ),
+    );
+  }
+
+  Widget _buildProductGrid() {
+    return GridView.builder(
+      padding: const EdgeInsets.all(16),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 0.75,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+      ),
+      itemCount: _products.length,
+      itemBuilder: (context, index) {
+        final product = _products[index];
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ProductDetailsPage(
+                  product: product,
+                  onAddToFavorites: () => _addToFavorites(product),
+                  onAddToCart: (quantity) => _addToCart(product, quantity),
+                  isFavorite: _favoriteProducts.contains(product),
+                ),
+              ),
+            );
+          },
+          child: ProductCard(
+            product: product,
+          ),
+        );
+      },
     );
   }
 }
